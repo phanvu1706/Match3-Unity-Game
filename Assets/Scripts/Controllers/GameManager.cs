@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour
     private UIMainManager m_uiMenu;
 
     private LevelCondition m_levelCondition;
+    private eLevelMode m_lastLevelMode;
 
     private void Awake()
     {
@@ -111,7 +113,27 @@ public class GameManager : MonoBehaviour
             m_levelCondition = this.gameObject.AddComponent<LevelTime>();
             m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), this);
         }
+        m_levelCondition.ConditionCompleteEvent += GameOver;
 
+        m_lastLevelMode = mode;
+        State = eStateGame.GAME_STARTED;
+    }
+
+    internal void RestartLevel()
+    {
+        m_boardController.ClearAllCells();
+        m_boardController.RestartGame();
+
+        if (m_lastLevelMode == eLevelMode.MOVES)
+        {
+            m_levelCondition = this.gameObject.AddComponent<LevelMoves>();
+            m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), m_boardController);
+        }
+        else if (m_lastLevelMode == eLevelMode.TIMER)
+        {
+            m_levelCondition = this.gameObject.AddComponent<LevelTime>();
+            m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), this);
+        }
         m_levelCondition.ConditionCompleteEvent += GameOver;
 
         State = eStateGame.GAME_STARTED;

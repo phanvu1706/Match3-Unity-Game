@@ -20,6 +20,7 @@ public class Board
     private int boardSizeY;
 
     private Cell[,] m_cells;
+    private NormalItem.eNormalType[,] lastGameStartTypes;
 
     private Transform m_root;
 
@@ -35,6 +36,7 @@ public class Board
         this.boardSizeY = gameSettings.BoardSizeY;
 
         m_cells = new Cell[boardSizeX, boardSizeY];
+        lastGameStartTypes = new NormalItem.eNormalType[boardSizeX, boardSizeY];
 
         CreateBoard();
     }
@@ -100,7 +102,30 @@ public class Board
                     }
                 }
 
-                item.SetType(Utils.GetRandomNormalTypeExcept(types.ToArray()));
+                NormalItem.eNormalType type = Utils.GetRandomNormalTypeExcept(types.ToArray());
+                item.SetType(type);
+                item.SetView();
+                item.SetViewRoot(m_root);
+
+                cell.Assign(item);
+                cell.ApplyItemPosition(false);
+
+                lastGameStartTypes[x, y] = type;
+            }
+        }
+    }
+
+    internal void Refill()
+    {
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                Cell cell = m_cells[x, y];
+                NormalItem item = new NormalItem();
+
+                NormalItem.eNormalType type = lastGameStartTypes[x, y];
+                item.SetType(type);
                 item.SetView();
                 item.SetViewRoot(m_root);
 
@@ -350,7 +375,7 @@ public class Board
         var dir = GetMatchDirection(matches);
 
         var bonus = matches.Where(x => x.Item is BonusItem).FirstOrDefault();
-        if(bonus == null)
+        if (bonus == null)
         {
             return matches;
         }
@@ -671,6 +696,18 @@ public class Board
 
                 GameObject.Destroy(cell.gameObject);
                 m_cells[x, y] = null;
+            }
+        }
+    }
+
+    public void ClearAllCells()
+    {
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                Cell cell = m_cells[x, y];
+                cell.Clear();
             }
         }
     }

@@ -23,6 +23,15 @@ public class LevelMoves : LevelCondition
         UpdateText();
     }
 
+    public override void ResetCondition(float value)
+    {
+        base.ResetCondition(value);
+
+        m_moves = (int)value;
+
+        UpdateText();
+    }
+
     private void OnMove()
     {
         if (m_conditionCompleted) return;
@@ -31,7 +40,7 @@ public class LevelMoves : LevelCondition
 
         UpdateText();
 
-        if(m_moves <= 0)
+        if (m_moves <= 0)
         {
             OnConditionComplete();
         }

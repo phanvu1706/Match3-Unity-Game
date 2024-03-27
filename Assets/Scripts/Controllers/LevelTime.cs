@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,15 @@ public class LevelTime : LevelCondition
         base.Setup(value, txt, mngr);
 
         m_mngr = mngr;
+
+        m_time = value;
+
+        UpdateText();
+    }
+
+    public override void ResetCondition(float value)
+    {
+        base.ResetCondition(value);
 
         m_time = value;
 

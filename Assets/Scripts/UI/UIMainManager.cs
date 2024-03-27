@@ -30,6 +30,11 @@ public class UIMainManager : MonoBehaviour
         m_gameManager.SetState(GameManager.eStateGame.MAIN_MENU);
     }
 
+    internal void RestartGame()
+    {
+        m_gameManager.RestartLevel();
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -77,14 +82,14 @@ public class UIMainManager : MonoBehaviour
         for (int i = 0; i < m_menuList.Length; i++)
         {
             IMenu menu = m_menuList[i];
-            if(menu is T)
+            if (menu is T)
             {
                 menu.Show();
             }
             else
             {
                 menu.Hide();
-            }            
+            }
         }
     }
 

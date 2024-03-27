@@ -46,6 +46,12 @@ public class BoardController : MonoBehaviour
         Fill();
     }
 
+    public void RestartGame()
+    {
+        m_board.Refill();
+        FindMatchesAndCollapse();
+    }
+
     private void Fill()
     {
         m_board.Fill();
@@ -224,7 +230,7 @@ public class BoardController : MonoBehaviour
             matches[i].ExplodeItem();
         }
 
-        if(matches.Count > m_gameSettings.MatchesMin)
+        if (matches.Count > m_gameSettings.MatchesMin)
         {
             m_board.ConvertNormalToBonus(matches, cellEnd);
         }
@@ -282,6 +288,11 @@ public class BoardController : MonoBehaviour
     internal void Clear()
     {
         m_board.Clear();
+    }
+
+    internal void ClearAllCells()
+    {
+        m_board.ClearAllCells();
     }
 
     private void ShowHint()
