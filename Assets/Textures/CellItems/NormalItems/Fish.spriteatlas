@@ -50,7 +50,7 @@ SpriteAtlas:
   - fish_1
   - fish_4
   - fish_6
-  - rainbow_fish
+  - fish_7
   - fish_5
   - fish_3
   m_RenderDataMap: {}

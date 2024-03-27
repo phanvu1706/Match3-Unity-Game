@@ -18,3 +18,4 @@ MonoBehaviour:
   LevelMoves: 16
   LevelTime: 30
   TimeForHint: 5
+  itemSkinName: 1

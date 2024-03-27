@@ -45,7 +45,10 @@ public class GameManager : MonoBehaviour
     private UIMainManager m_uiMenu;
 
     private LevelCondition m_levelCondition;
+
     private eLevelMode m_lastLevelMode;
+
+    private NormalItemSkin m_normalItemSkin;
 
     private void Awake()
     {
@@ -56,8 +59,10 @@ public class GameManager : MonoBehaviour
         m_uiMenu = FindObjectOfType<UIMainManager>();
         m_uiMenu.Setup(this);
 
-        // Add ObjectPooling
+        m_normalItemSkin = Resources.Load<NormalItemSkin>(Constants.NORMAL_ITEM_SKIN_PATH);
+        m_normalItemSkin.SetSkin(m_gameSettings.itemSkinName);
 
+        // Add ObjectPooling
         ObjectPooling op = new GameObject("ObjectPooling").AddComponent<ObjectPooling>();
         op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_ONE, 10);
         op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_TWO, 10);

@@ -1,6 +1,7 @@
-﻿public class Constants 
+﻿public class Constants
 {
     public const string GAME_SETTINGS_PATH = "gamesettings";
+    public const string NORMAL_ITEM_SKIN_PATH = "normalitemskin";
 
     public const string PREFAB_CELL_BACKGROUND = "prefabs/cellBackground";
 
