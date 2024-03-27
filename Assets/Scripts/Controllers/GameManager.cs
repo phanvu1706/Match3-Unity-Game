@@ -53,6 +53,21 @@ public class GameManager : MonoBehaviour
 
         m_uiMenu = FindObjectOfType<UIMainManager>();
         m_uiMenu.Setup(this);
+
+        // Add ObjectPooling
+
+        ObjectPooling op = new GameObject("ObjectPooling").AddComponent<ObjectPooling>();
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_ONE, 10);
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_TWO, 10);
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_THREE, 10);
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_FOUR, 10);
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_FIVE, 10);
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_SIX, 10);
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_SEVEN, 10);
+
+        op.PreloadObject(Constants.PREFAB_BONUS_BOMB, 3);
+        op.PreloadObject(Constants.PREFAB_BONUS_HORIZONTAL, 3);
+        op.PreloadObject(Constants.PREFAB_BONUS_VERTICAL, 3);
     }
 
     void Start()
@@ -71,7 +86,7 @@ public class GameManager : MonoBehaviour
     {
         State = state;
 
-        if(State == eStateGame.PAUSE)
+        if (State == eStateGame.PAUSE)
         {
             DOTween.PauseAll();
         }
