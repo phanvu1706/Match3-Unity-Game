@@ -163,6 +163,7 @@ public class Board
 
     internal void FillGapsWithNewItems()
     {
+        /*
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
@@ -178,6 +179,67 @@ public class Board
 
                 cell.Assign(item);
                 cell.ApplyItemPosition(true);
+            }
+        }
+        */
+
+        List<int> itemTypesCount = GetItemTypesCount();
+
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                Cell cell = m_cells[x, y];
+                if (!cell.IsEmpty) continue;
+
+                NormalItem item = new NormalItem();
+
+                List<NormalItem.eNormalType> types = new List<NormalItem.eNormalType>();
+                if (cell.NeighbourBottom != null)
+                {
+                    NormalItem nitem = cell.NeighbourBottom.Item as NormalItem;
+                    if (nitem != null)
+                    {
+                        types.Add(nitem.ItemType);
+                    }
+                }
+
+                if (cell.NeighbourLeft != null)
+                {
+                    NormalItem nitem = cell.NeighbourLeft.Item as NormalItem;
+                    if (nitem != null)
+                    {
+                        types.Add(nitem.ItemType);
+                    }
+                }
+
+                if (cell.NeighbourRight != null)
+                {
+                    NormalItem nitem = cell.NeighbourRight.Item as NormalItem;
+                    if (nitem != null)
+                    {
+                        types.Add(nitem.ItemType);
+                    }
+                }
+
+                if (cell.NeighbourUp != null)
+                {
+                    NormalItem nitem = cell.NeighbourUp.Item as NormalItem;
+                    if (nitem != null)
+                    {
+                        types.Add(nitem.ItemType);
+                    }
+                }
+
+                NormalItem.eNormalType type = Utils.GetLeastAmountNormalTypeExcept(types.ToArray(), itemTypesCount);
+                item.SetType(type);
+                item.SetView();
+                item.SetViewRoot(m_root);
+
+                cell.Assign(item);
+                cell.ApplyItemPosition(true);
+
+                ++itemTypesCount[(int)type];
             }
         }
     }
@@ -656,6 +718,26 @@ public class Board
         }
 
         return null;
+    }
+
+    private List<int> GetItemTypesCount()
+    {
+        List<int> typesCount = new int[Enum.GetNames(typeof(NormalItem.eNormalType)).Length].ToList();
+
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                Cell cell = m_cells[x, y];
+                if (cell.IsEmpty) continue;
+
+                NormalItem nitem = cell.Item as NormalItem;
+                if(nitem != null)
+                    ++typesCount[(int)nitem.ItemType];
+            }
+        }
+
+        return typesCount;
     }
 
     internal void ShiftDownItems()

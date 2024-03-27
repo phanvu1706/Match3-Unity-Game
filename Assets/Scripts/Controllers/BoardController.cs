@@ -48,6 +48,7 @@ public class BoardController : MonoBehaviour
 
     public void RestartGame()
     {
+        m_gameOver = false;
         m_board.Refill();
         FindMatchesAndCollapse();
     }
