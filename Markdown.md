@@ -1,0 +1,7 @@
+- Cấu trúc thư mục khi project add thêm nhiều plugin sẽ dễ bị rối khi cần navigate tới asset của game. Có thể sắp xếp lại thư mục theo dạng
+  - GameAssets: Chứa các asset của game.
+  - ThirdParties: Chứa các sdk của 3rdParty.
+  - Các folder cần nằm trong Assets như Plugin, StreamingAssets....
+- File asset cần phân vào các folder riêng theo chức năng.
+- Sắp xếp lại thư mục bị thừa (Utility và Utilities)
+- Bug cell tồn tại cùng lúc 2 item nhưng chỉ thao tác được với 1 item duy nhất. Phương án: Thử duyệt mảng từ dưới lên thay vì từ trên xuống khi gọi function FillGapsWithNewItems.
