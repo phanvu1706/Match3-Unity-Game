@@ -31,6 +31,10 @@ public class BoardController : MonoBehaviour
 
     private bool m_gameOver;
 
+    private WaitForSeconds pointTwo = new WaitForSeconds(0.2f);
+    private WaitForSeconds pointThree = new WaitForSeconds(0.3f);
+
+
     public void StartGame(GameManager gameManager, GameSettings gameSettings)
     {
         m_gameManager = gameManager;
@@ -243,11 +247,11 @@ public class BoardController : MonoBehaviour
     {
         m_board.ShiftDownItems();
 
-        yield return new WaitForSeconds(0.2f);
+        yield return pointTwo;
 
         m_board.FillGapsWithNewItems();
 
-        yield return new WaitForSeconds(0.2f);
+        yield return pointTwo;
 
         FindMatchesAndCollapse();
     }
@@ -256,11 +260,11 @@ public class BoardController : MonoBehaviour
     {
         m_board.ExplodeAllItems();
 
-        yield return new WaitForSeconds(0.2f);
+        yield return pointTwo;
 
         m_board.Fill();
 
-        yield return new WaitForSeconds(0.2f);
+        yield return pointTwo;
 
         FindMatchesAndCollapse();
     }
@@ -269,7 +273,7 @@ public class BoardController : MonoBehaviour
     {
         m_board.Shuffle();
 
-        yield return new WaitForSeconds(0.3f);
+        yield return pointThree;
 
         FindMatchesAndCollapse();
     }
@@ -293,7 +297,7 @@ public class BoardController : MonoBehaviour
 
     internal void ClearAllCells()
     {
-        m_board.ClearAllCells();
+        m_board.ClearAllCellsItem();
     }
 
     private void ShowHint()

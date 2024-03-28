@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
+//using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine.Pool;
 using URandom = UnityEngine.Random;
 
 public class Utils
@@ -15,19 +15,34 @@ public class Utils
         return result;
     }
 
-    public static NormalItem.eNormalType GetRandomNormalTypeExcept(NormalItem.eNormalType[] types)
+    public static NormalItem.eNormalType GetRandomNormalTypeExcept(List<NormalItem.eNormalType> types)
     {
-        List<NormalItem.eNormalType> list = Enum.GetValues(typeof(NormalItem.eNormalType)).Cast<NormalItem.eNormalType>().Except(types).ToList();
+        //List<NormalItem.eNormalType> list = Enum.GetValues(typeof(NormalItem.eNormalType)).Cast<NormalItem.eNormalType>().Except(types).ToList();
+        List<NormalItem.eNormalType> list = ListPool<NormalItem.eNormalType>.Get();
+        list.Clear(); int totalTypeCount = Enum.GetValues(typeof(NormalItem.eNormalType)).Length;
+        for (int i = 0; i < totalTypeCount; ++i)
+        {
+            NormalItem.eNormalType type = (NormalItem.eNormalType)i;
+            if (!types.Contains(type)) list.Add(type);
+        }
 
         int rnd = URandom.Range(0, list.Count);
         NormalItem.eNormalType result = list[rnd];
 
+        list.Clear();
+        ListPool<NormalItem.eNormalType>.Release(list);
         return result;
     }
 
-    public static NormalItem.eNormalType GetLeastAmountNormalTypeExcept(NormalItem.eNormalType[] types, List<int> typesCount)
+    public static NormalItem.eNormalType GetLeastAmountNormalTypeExcept(List<NormalItem.eNormalType> types, List<int> typesCount)
     {
-        List<NormalItem.eNormalType> list = Enum.GetValues(typeof(NormalItem.eNormalType)).Cast<NormalItem.eNormalType>().Except(types).ToList();
+        List<NormalItem.eNormalType> list = ListPool<NormalItem.eNormalType>.Get();
+        list.Clear(); int totalTypeCount = Enum.GetValues(typeof(NormalItem.eNormalType)).Length;
+        for (int i = 0; i < totalTypeCount; ++i)
+        {
+            NormalItem.eNormalType type = (NormalItem.eNormalType)i;
+            if (!types.Contains(type)) list.Add(type);
+        }
 
         int index = 0;
         int least = typesCount[(int)list[index]];
@@ -41,7 +56,10 @@ public class Utils
                 index = i;
             }
         }
+        NormalItem.eNormalType result = list[index];
 
-        return list[index];
+        list.Clear();
+        ListPool<NormalItem.eNormalType>.Release(list);
+        return result;
     }
 }

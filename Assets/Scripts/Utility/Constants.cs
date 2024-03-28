@@ -24,4 +24,8 @@
     public const string PREFAB_BONUS_VERTICAL = "prefabs/itemBonusVertical";
 
     public const string PREFAB_BONUS_BOMB = "prefabs/itemBonusBomb";
+
+    public const string PREFAB_BOARD_CONTROLLER = "prefabs/BoardController";
+
+    public const string PREFAB_OBJECT_POOLING = "prefabs/ObjectPooling";
 }

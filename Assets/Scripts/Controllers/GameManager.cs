@@ -63,14 +63,16 @@ public class GameManager : MonoBehaviour
         m_normalItemSkin.SetSkin(m_gameSettings.itemSkinName);
 
         // Add ObjectPooling
-        ObjectPooling op = new GameObject("ObjectPooling").AddComponent<ObjectPooling>();
-        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_ONE, 10);
-        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_TWO, 10);
-        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_THREE, 10);
-        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_FOUR, 10);
-        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_FIVE, 10);
-        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_SIX, 10);
-        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_SEVEN, 10);
+        int preloadNormalItemCount = m_gameSettings.BoardSizeX * m_gameSettings.BoardSizeY / 7 + 3;
+
+        ObjectPooling op = Instantiate(Resources.Load<ObjectPooling>(Constants.PREFAB_OBJECT_POOLING));
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_ONE, preloadNormalItemCount);
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_TWO, preloadNormalItemCount);
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_THREE, preloadNormalItemCount);
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_FOUR, preloadNormalItemCount);
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_FIVE, preloadNormalItemCount);
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_SIX, preloadNormalItemCount);
+        op.PreloadObject(Constants.PREFAB_NORMAL_TYPE_SEVEN, preloadNormalItemCount);
 
         op.PreloadObject(Constants.PREFAB_BONUS_BOMB, 3);
         op.PreloadObject(Constants.PREFAB_BONUS_HORIZONTAL, 3);
@@ -105,7 +107,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadLevel(eLevelMode mode)
     {
-        m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
+        m_boardController = Instantiate(Resources.Load<BoardController>(Constants.PREFAB_BOARD_CONTROLLER));// new GameObject("BoardController").AddComponent<BoardController>();
         m_boardController.StartGame(this, m_gameSettings);
 
         if (mode == eLevelMode.MOVES)
@@ -116,7 +118,7 @@ public class GameManager : MonoBehaviour
         else if (mode == eLevelMode.TIMER)
         {
             m_levelCondition = this.gameObject.AddComponent<LevelTime>();
-            m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), this);
+            m_levelCondition.Setup(m_gameSettings.LevelTime, m_uiMenu.GetLevelConditionView(), this);
         }
         m_levelCondition.ConditionCompleteEvent += GameOver;
 
@@ -137,7 +139,7 @@ public class GameManager : MonoBehaviour
         else if (m_lastLevelMode == eLevelMode.TIMER)
         {
             m_levelCondition = this.gameObject.AddComponent<LevelTime>();
-            m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), this);
+            m_levelCondition.Setup(m_gameSettings.LevelTime, m_uiMenu.GetLevelConditionView(), this);
         }
         m_levelCondition.ConditionCompleteEvent += GameOver;
 

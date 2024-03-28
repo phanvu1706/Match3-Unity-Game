@@ -2,8 +2,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+//using System.Linq;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class Board
 {
@@ -76,6 +77,7 @@ public class Board
 
     internal void Fill()
     {
+        List<NormalItem.eNormalType> types = ListPool<NormalItem.eNormalType>.Get();
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
@@ -83,7 +85,7 @@ public class Board
                 Cell cell = m_cells[x, y];
                 NormalItem item = new NormalItem();
 
-                List<NormalItem.eNormalType> types = new List<NormalItem.eNormalType>();
+                types.Clear();
                 if (cell.NeighbourBottom != null)
                 {
                     NormalItem nitem = cell.NeighbourBottom.Item as NormalItem;
@@ -102,7 +104,7 @@ public class Board
                     }
                 }
 
-                NormalItem.eNormalType type = Utils.GetRandomNormalTypeExcept(types.ToArray());
+                NormalItem.eNormalType type = Utils.GetRandomNormalTypeExcept(types);
                 item.SetType(type);
                 item.SetView();
                 item.SetViewRoot(m_root);
@@ -113,6 +115,9 @@ public class Board
                 lastGameStartTypes[x, y] = type;
             }
         }
+
+        types.Clear();
+        ListPool<NormalItem.eNormalType>.Release(types);
     }
 
     internal void Refill()
@@ -137,7 +142,8 @@ public class Board
 
     internal void Shuffle()
     {
-        List<Item> list = new List<Item>();
+        List<Item> list = ListPool<Item>.Get();// new List<Item>();
+        
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
@@ -158,6 +164,9 @@ public class Board
                 list.RemoveAt(rnd);
             }
         }
+
+        list.Clear();
+        ListPool<Item>.Release(list);
     }
 
 
@@ -183,7 +192,9 @@ public class Board
         }
         */
 
-        List<int> itemTypesCount = GetItemTypesCount();
+        List<int> itemTypesCount = ListPool<int>.Get();
+        itemTypesCount.Clear(); GetItemTypesCount(ref itemTypesCount);
+        List<NormalItem.eNormalType> types = ListPool<NormalItem.eNormalType>.Get();
 
         for (int x = 0; x < boardSizeX; x++)
         {
@@ -194,7 +205,7 @@ public class Board
 
                 NormalItem item = new NormalItem();
 
-                List<NormalItem.eNormalType> types = new List<NormalItem.eNormalType>();
+                types.Clear();
                 if (cell.NeighbourBottom != null)
                 {
                     NormalItem nitem = cell.NeighbourBottom.Item as NormalItem;
@@ -231,7 +242,7 @@ public class Board
                     }
                 }
 
-                NormalItem.eNormalType type = Utils.GetLeastAmountNormalTypeExcept(types.ToArray(), itemTypesCount);
+                NormalItem.eNormalType type = Utils.GetLeastAmountNormalTypeExcept(types, itemTypesCount);
                 item.SetType(type);
                 item.SetView();
                 item.SetViewRoot(m_root);
@@ -242,6 +253,12 @@ public class Board
                 ++itemTypesCount[(int)type];
             }
         }
+
+        itemTypesCount.Clear();
+        ListPool<int>.Release(itemTypesCount);
+
+        types.Clear();
+        ListPool<NormalItem.eNormalType>.Release(types);
     }
 
     internal void ExplodeAllItems()
@@ -306,7 +323,6 @@ public class Board
         return list;
     }
 
-
     public List<Cell> GetVerticalMatches(Cell cell)
     {
         List<Cell> list = new List<Cell>();
@@ -342,6 +358,7 @@ public class Board
 
         return list;
     }
+
 
     internal void ConvertNormalToBonus(List<Cell> matches, Cell cellToConvert)
     {
@@ -383,17 +400,34 @@ public class Board
     {
         if (matches == null || matches.Count < m_matchMin) return eMatchDirection.NONE;
 
-        var listH = matches.Where(x => x.BoardX == matches[0].BoardX).ToList();
-        if (listH.Count == matches.Count)
+        //var listH = matches.Where(x => x.BoardX == matches[0].BoardX).ToList();
+        //if (listH.Count == matches.Count)
+        //{
+        //    return eMatchDirection.VERTICAL;
+        //}
+        // Chuyển linq sang for
+        int hCount = 0;
+        for(int i = 0; i < matches.Count; ++i)
         {
+            if(matches[i].BoardX == matches[0].BoardX)
+                ++hCount;            
+        }
+        if (hCount == matches.Count)
             return eMatchDirection.VERTICAL;
-        }
 
-        var listV = matches.Where(x => x.BoardY == matches[0].BoardY).ToList();
-        if (listV.Count == matches.Count)
+        //var listV = matches.Where(x => x.BoardY == matches[0].BoardY).ToList();
+        //if (listV.Count == matches.Count)
+        //{
+        //    return eMatchDirection.HORIZONTAL;
+        //}
+        int vCount = 0;
+        for (int i = 0; i < matches.Count; ++i)
         {
-            return eMatchDirection.HORIZONTAL;
+            if (matches[i].BoardY == matches[0].BoardY)
+                ++vCount;
         }
+        if (vCount == matches.Count)
+            return eMatchDirection.HORIZONTAL;
 
         if (matches.Count > 5)
         {
@@ -436,11 +470,22 @@ public class Board
     {
         var dir = GetMatchDirection(matches);
 
-        var bonus = matches.Where(x => x.Item is BonusItem).FirstOrDefault();
-        if (bonus == null)
+        //var bonus = matches.Where(x => x.Item is BonusItem).FirstOrDefault();
+        //if (bonus == null)
+        //{
+        //    return matches;
+        //}
+        bool bonusExist = false;
+        for(int i = 0; i < matches.Count; ++i)
         {
-            return matches;
+            if (matches[i].Item is BonusItem)
+            {
+                bonusExist = true;
+                break;
+            }
         }
+        if (!bonusExist)
+            return matches;
 
         List<Cell> result = new List<Cell>();
         switch (dir)
@@ -720,9 +765,13 @@ public class Board
         return null;
     }
 
-    private List<int> GetItemTypesCount()
+    private void GetItemTypesCount(ref List<int> typesCount)
     {
-        List<int> typesCount = new int[Enum.GetNames(typeof(NormalItem.eNormalType)).Length].ToList();
+        int totalItemCount = Enum.GetNames(typeof(NormalItem.eNormalType)).Length;
+        for (int i = 0; i < totalItemCount; ++i)
+        {
+            typesCount.Add(0);
+        }
 
         for (int x = 0; x < boardSizeX; x++)
         {
@@ -736,8 +785,6 @@ public class Board
                     ++typesCount[(int)nitem.ItemType];
             }
         }
-
-        return typesCount;
     }
 
     internal void ShiftDownItems()
@@ -782,7 +829,7 @@ public class Board
         }
     }
 
-    public void ClearAllCells()
+    public void ClearAllCellsItem()
     {
         for (int x = 0; x < boardSizeX; x++)
         {
